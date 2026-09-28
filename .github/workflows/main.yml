@@ -1,51 +1,35 @@
-name: Build Nitrox-Sauld APK concurrency: 
-
+name: Build Nitrox-Sauld APK
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Baixar projeto
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Configurar Node
+      - name: Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Instalar dependências
+      - name: Instalar dependencias
         run: npm install
-
-      - name: Preparar arquivos web
-        run: |
-          mkdir -p www
-          cp index.html www/index.html
-
-      - name: Configurar Java
+      - name: Preparar web
+        run: mkdir -p www && cp index.html www/index.html
+      - name: Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Criar projeto Android
+      - name: Criar Android
         run: npx cap add android
-
-      - name: Sincronizar Capacitor
+      - name: Sincronizar
         run: npx cap sync android
-
       - name: Gerar APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Disponibilizar APK
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - name: APK
         uses: actions/upload-artifact@v4
         with:
           name: nitrox-sauld-apk
